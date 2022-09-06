@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.UUID;
 
@@ -32,16 +31,16 @@ public class Card implements UserDetails {
     private String pinCode;
 
     @Column(nullable = false)
-    @DateTimeFormat(pattern = "dd/yy")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date expireDate;
 
     @Transient
     private String fullName;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Bank bank;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private User user;
 
     private Double balance = 0D;
@@ -53,7 +52,7 @@ public class Card implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(this.user.getRoles());
+        return this.user.getRoles();
     }
 
     @Override
@@ -88,6 +87,15 @@ public class Card implements UserDetails {
 
     public String getFullName() {
         return String.format("%s %s", this.user.getFirstName(), this.user.getLastname());
+    }
+
+    public Card(String cardNumber, String cvv, String pinCode, Bank bank, User user, Double balance) {
+        this.cardNumber = cardNumber;
+        this.cvv = cvv;
+        this.pinCode = pinCode;
+        this.bank = bank;
+        this.user = user;
+        this.balance = balance;
     }
 }
 
