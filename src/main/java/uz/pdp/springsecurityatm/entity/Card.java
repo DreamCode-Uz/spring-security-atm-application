@@ -1,5 +1,6 @@
 package uz.pdp.springsecurityatm.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,7 @@ public class Card implements UserDetails {
     private String cvv;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String pinCode;
 
     @Column(nullable = false)

@@ -5,10 +5,13 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import uz.pdp.springsecurityatm.entity.Card;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 
+import static io.jsonwebtoken.Header.JWT_TYPE;
+import static io.jsonwebtoken.Header.TYPE;
 import static io.jsonwebtoken.SignatureAlgorithm.HS512;
 
 @Component
@@ -18,13 +21,15 @@ public class JWTProvider {
     private Long expiration;
 
     public String generateToken(Authentication authentication) {
-        System.out.println(authentication.getPrincipal());
+        Card principal = (Card) authentication.getPrincipal();
         return Jwts
                 .builder()
-                .setSubject("test")
+                .setHeaderParam(TYPE, JWT_TYPE)
+                .setSubject(principal.getCardNumber())
                 .setIssuedAt(new Date())    // start time
                 .setExpiration(new Date(new Date().getTime() + expiration * 1000))      //  end time
-                .signWith(key, HS512)
+                .setId(principal.getId().toString())
+                .signWith(key)
                 .compact();
     }
 

@@ -27,6 +27,7 @@ public class User {
     private String lastname;
 
     @OneToMany
+    @ToString.Exclude
     private Set<Role> roles;
 
     @Override
