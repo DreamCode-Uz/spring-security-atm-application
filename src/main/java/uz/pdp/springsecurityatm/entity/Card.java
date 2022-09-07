@@ -1,9 +1,10 @@
 package uz.pdp.springsecurityatm.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.Hibernate;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,11 +12,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 @Entity
 public class Card implements UserDetails {
     @Id
@@ -42,7 +46,9 @@ public class Card implements UserDetails {
     @ManyToOne(optional = false)
     private Bank bank;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ToString.Exclude
     private User user;
 
     private Double balance = 0D;
@@ -88,16 +94,28 @@ public class Card implements UserDetails {
     }
 
     public String getFullName() {
-        return String.format("%s %s", this.user.getFirstName(), this.user.getLastname());
+        return String.format("%s %s", this.user.getFirstName() != null ? this.user.getFirstName() : "", this.user.getLastname() != null ? this.user.getLastname() : "").trim();
     }
 
-    public Card(String cardNumber, String cvv, String pinCode, Bank bank, User user, Double balance) {
+    public Card(String cardNumber, String cvv, String pinCode, Bank bank, Double balance) {
         this.cardNumber = cardNumber;
         this.cvv = cvv;
         this.pinCode = pinCode;
         this.bank = bank;
-        this.user = user;
         this.balance = balance;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Card card = (Card) o;
+        return id != null && Objects.equals(id, card.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }
 

@@ -1,5 +1,5 @@
 package uz.pdp.springsecurityatm.entity.enums;
 
-public enum CardType {
+public enum CardName {
     UZCARD, HUMO, VISA
 }

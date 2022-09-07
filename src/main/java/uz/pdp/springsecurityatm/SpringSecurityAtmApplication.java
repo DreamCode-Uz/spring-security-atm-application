@@ -19,7 +19,7 @@ import java.util.*;
 
 @SpringBootApplication
 public class SpringSecurityAtmApplication implements CommandLineRunner {
-
+    Calendar calendar = Calendar.getInstance();
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final BankRepository bankRepository;
@@ -41,25 +41,21 @@ public class SpringSecurityAtmApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        roleRepository.saveAll(Arrays.asList(
+        List<Role> roles = roleRepository.saveAll(Arrays.asList(
                 new Role(null, RoleName.ROLE_DIRECTOR),
                 new Role(null, RoleName.ROLE_MANAGER),
                 new Role(null, RoleName.ROLE_USER)
         ));
-        List<Bank> banks = bankRepository.saveAll(
-                Arrays.asList(
-                        new Bank(null, "NBU"),
-                        new Bank(null, "QQB")
-                )
-        );
-        Optional<Role> director = roleRepository.findRoleByRole(RoleName.ROLE_DIRECTOR);
-        User savedUser = userRepository.save(new User(null, "John", "Doe", Collections.singleton(director.get())));
-        Card card = new Card("8600111122223333", null, passwordEncoder.encode("1234"), banks.get(0), savedUser, 0D);
-        Calendar instance = Calendar.getInstance();
-        instance.setTime(new Date());
-        instance.add(Calendar.YEAR, 10);
-        card.setExpireDate(instance.getTime());
-        card.setEnabled(true);
+        Bank nbu = bankRepository.save(new Bank(null, "NBU"));
+
+        calendar.setTime(new Date());
+        calendar.add(Calendar.YEAR, 10);
+        Optional<Role> roleByRole = roleRepository.findRoleByRole(RoleName.ROLE_DIRECTOR);
+        Card card = new Card("0000999900009999", "123", "1234", nbu, 100D);
+        User user = new User("Jane", "Doe", Collections.singleton(roleByRole.get()));
+        user.setCards(Collections.singleton(card));
+        card.setUser(user);
+        card.setExpireDate(calendar.getTime());
         cardRepository.save(card);
     }
 }

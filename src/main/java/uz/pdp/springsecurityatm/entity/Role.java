@@ -1,16 +1,19 @@
 package uz.pdp.springsecurityatm.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
 import uz.pdp.springsecurityatm.entity.enums.RoleName;
 
 import javax.persistence.*;
+import java.util.Objects;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 @Entity
 public class Role implements GrantedAuthority {
     @Id
@@ -20,8 +23,33 @@ public class Role implements GrantedAuthority {
     @Enumerated(EnumType.STRING)
     private RoleName role;
 
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "user_role",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @ToString.Exclude
+    private Set<User> users;
+
     @Override
     public String getAuthority() {
         return role.name();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Role role = (Role) o;
+        return id != null && Objects.equals(id, role.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    public Role(Integer id, RoleName role) {
+        this.id = id;
+        this.role = role;
     }
 }

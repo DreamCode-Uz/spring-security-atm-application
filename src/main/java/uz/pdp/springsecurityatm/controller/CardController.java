@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import uz.pdp.springsecurityatm.payload.CardDTO;
 import uz.pdp.springsecurityatm.service.CardService;
 
+import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
@@ -29,5 +31,11 @@ public class CardController {
     @Secured({"ROLE_DIRECTOR", "ROLE_MANAGER"})
     public ResponseEntity<?> getCard(@PathVariable("cardId") UUID id) {
         return service.getCard(id);
+    }
+
+    @PostMapping
+    @Secured("ROLE_MANAGER")
+    public ResponseEntity<?> registerCard(@RequestBody@Valid CardDTO cardDTO) {
+        return service.registerCard();
     }
 }

@@ -2,6 +2,8 @@ package uz.pdp.springsecurityatm.entity;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -10,7 +12,6 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
-//  @Data => Using @Data for JPA entities is not recommended. It can cause severe performance and memory consumption issues.
 @Getter
 @Setter
 @ToString
@@ -26,9 +27,23 @@ public class User {
     @Column(nullable = false)
     private String lastname;
 
-    @OneToMany
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     private Set<Role> roles;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private Set<Card> cards;
+
+    public User(String firstName, String lastname, Set<Role> roles) {
+        this.firstName = firstName;
+        this.lastname = lastname;
+        this.roles = roles;
+    }
 
     @Override
     public boolean equals(Object o) {

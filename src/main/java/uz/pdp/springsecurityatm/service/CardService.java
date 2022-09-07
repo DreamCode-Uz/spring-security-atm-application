@@ -44,4 +44,8 @@ public class CardService {
         Optional<Card> optionalCard = repository.findById(id);
         return status(optionalCard.isPresent() ? OK : NOT_FOUND).body(optionalCard.isPresent() ? new CardResponse(optionalCard.get()) : "Card not found");
     }
+
+    public ResponseEntity<?> registerCard() {
+        return null;
+    }
 }
