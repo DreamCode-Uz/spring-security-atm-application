@@ -3,6 +3,7 @@ package uz.pdp.springsecurityatm.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uz.pdp.springsecurityatm.payload.CardDTO;
 import uz.pdp.springsecurityatm.service.CardService;
@@ -21,6 +22,12 @@ public class CardController {
         this.service = service;
     }
 
+    @GetMapping("/type")
+    @PreAuthorize(value = "isAuthenticated()")
+    public ResponseEntity<?> getAllCardTypes() {
+        return service.getAllCardTypes();
+    }
+
     @GetMapping
     @Secured("ROLE_DIRECTOR")
     public ResponseEntity<?> getCards(@RequestParam(name = "page", defaultValue = "1") Integer page, @RequestParam(name = "size", defaultValue = "10") Integer size) {
@@ -34,8 +41,8 @@ public class CardController {
     }
 
     @PostMapping
-    @Secured("ROLE_MANAGER")
-    public ResponseEntity<?> registerCard(@RequestBody@Valid CardDTO cardDTO) {
-        return service.registerCard();
+    @Secured({"ROLE_DIRECTOR", "ROLE_MANAGER"})
+    public ResponseEntity<?> registerCard(@RequestBody @Valid CardDTO cardDTO) {
+        return service.registerCard(cardDTO);
     }
 }

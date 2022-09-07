@@ -6,9 +6,8 @@ import uz.pdp.springsecurityatm.entity.CardType;
 import uz.pdp.springsecurityatm.entity.enums.CardName;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
-public interface CardTypeRepository extends JpaRepository<CardType, UUID> {
+public interface CardTypeRepository extends JpaRepository<CardType, Integer> {
     Optional<CardType> findCardTypeByType(CardName type);
 }

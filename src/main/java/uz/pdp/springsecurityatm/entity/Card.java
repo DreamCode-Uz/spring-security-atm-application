@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
@@ -56,7 +57,7 @@ public class Card implements UserDetails {
     @ToString.Exclude
     private User user;
 
-    private Double balance = 0D;
+    private BigDecimal balance = new BigDecimal(0);
 
     private boolean enabled;
     private boolean accountNonExpired = true;
@@ -102,7 +103,7 @@ public class Card implements UserDetails {
         return String.format("%s %s", this.user.getFirstName() != null ? this.user.getFirstName() : "", this.user.getLastname() != null ? this.user.getLastname() : "").trim();
     }
 
-    public Card(String cardNumber, String cvv, String pinCode, Bank bank, Double balance, CardType type) {
+    public Card(String cardNumber, String cvv, String pinCode, Bank bank, BigDecimal balance, CardType type) {
         this.cardNumber = cardNumber;
         this.cvv = cvv;
         this.pinCode = pinCode;

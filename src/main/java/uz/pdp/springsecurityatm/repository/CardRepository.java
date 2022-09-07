@@ -10,4 +10,6 @@ import java.util.UUID;
 @Repository
 public interface CardRepository extends JpaRepository<Card, UUID> {
     Optional<Card> findByCardNumber(String cardNumber);
+
+    boolean existsByCardNumber(String cardNumber);
 }

@@ -19,8 +19,6 @@ public class CardDTO {
     @Min(0)
     private Double balance;
     @NotNull
-    private Integer cardId;
-    @NotNull
     private Integer typeId;
     @NotNull
     private Integer bankId;

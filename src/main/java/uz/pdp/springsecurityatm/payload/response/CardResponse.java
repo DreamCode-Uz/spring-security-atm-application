@@ -14,7 +14,7 @@ public class CardResponse {
     private String fullName;
     private String cardNumber;
     private String cvv;
-    private Double balance;
+    private String balance;
     private boolean enabled;
     private boolean accountNonLocked;
     private boolean accountNonExpired;
@@ -27,7 +27,7 @@ public class CardResponse {
         this.fullName = card.getFullName();
         this.cardNumber = card.getCardNumber();
         this.cvv = card.getCvv();
-        this.balance = card.getBalance();
+        this.balance = card.getBalance().toPlainString();
         this.enabled = card.isEnabled();
         this.accountNonLocked = card.isAccountNonLocked();
         this.accountNonExpired = card.isAccountNonExpired();
