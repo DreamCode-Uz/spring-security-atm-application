@@ -40,6 +40,9 @@ public class Card implements UserDetails {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date expireDate;
 
+    @ManyToOne
+    private CardType type;
+
     @Transient
     private String fullName;
 
@@ -97,12 +100,13 @@ public class Card implements UserDetails {
         return String.format("%s %s", this.user.getFirstName() != null ? this.user.getFirstName() : "", this.user.getLastname() != null ? this.user.getLastname() : "").trim();
     }
 
-    public Card(String cardNumber, String cvv, String pinCode, Bank bank, Double balance) {
+    public Card(String cardNumber, String cvv, String pinCode, Bank bank, Double balance, CardType type) {
         this.cardNumber = cardNumber;
         this.cvv = cvv;
         this.pinCode = pinCode;
         this.bank = bank;
         this.balance = balance;
+        this.type = type;
     }
 
     @Override
