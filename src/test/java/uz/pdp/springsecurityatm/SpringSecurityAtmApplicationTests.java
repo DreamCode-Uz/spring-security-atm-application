@@ -41,6 +41,7 @@ class SpringSecurityAtmApplicationTests {
         user.setCards(Collections.singleton(card));
         card.setUser(user);
         card.setExpireDate(calendar.getTime());
-        cardRepository.save(card);
+        Card save = cardRepository.save(card);
+        System.out.println(save);
     }
 }

@@ -2,14 +2,11 @@ package uz.pdp.springsecurityatm.entity;
 
 import lombok.*;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.GrantedAuthority;
 import uz.pdp.springsecurityatm.entity.enums.RoleName;
 
 import javax.persistence.*;
 import java.util.Objects;
-import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,11 +21,6 @@ public class Role implements GrantedAuthority {
 
     @Enumerated(EnumType.STRING)
     private RoleName role;
-
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @ToString.Exclude
-    private Set<User> users;
 
     @Override
     public String getAuthority() {
@@ -46,10 +38,5 @@ public class Role implements GrantedAuthority {
     @Override
     public int hashCode() {
         return getClass().hashCode();
-    }
-
-    public Role(Integer id, RoleName role) {
-        this.id = id;
-        this.role = role;
     }
 }
