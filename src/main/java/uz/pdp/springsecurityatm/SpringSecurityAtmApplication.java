@@ -47,15 +47,15 @@ public class SpringSecurityAtmApplication implements CommandLineRunner {
                 new Role(null, RoleName.ROLE_USER)
         ));
         Bank nbu = bankRepository.save(new Bank(null, "NBU"));
-
-        calendar.setTime(new Date());
-        calendar.add(Calendar.YEAR, 10);
-        Optional<Role> roleByRole = roleRepository.findRoleByRole(RoleName.ROLE_DIRECTOR);
-        Card card = new Card("0000999900009999", "123", "1234", nbu, 100D);
-        User user = new User("Jane", "Doe", Collections.singleton(roleByRole.get()));
-        user.setCards(Collections.singleton(card));
-        card.setUser(user);
-        card.setExpireDate(calendar.getTime());
-        cardRepository.save(card);
+//
+//        calendar.setTime(new Date());
+//        calendar.add(Calendar.YEAR, 10);
+//        Optional<Role> roleByRole = roleRepository.findRoleByRole(RoleName.ROLE_DIRECTOR);
+//        Card card = new Card("0000999900009999", "123", "1234", nbu, 100D);
+//        User user = new User("Jane", "Doe", Collections.singleton(roleByRole.get()));
+//        user.setCards(Collections.singleton(card));
+//        card.setUser(user);
+//        card.setExpireDate(calendar.getTime());
+//        cardRepository.save(card);
     }
 }

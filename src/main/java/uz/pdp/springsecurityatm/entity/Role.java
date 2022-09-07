@@ -2,6 +2,8 @@ package uz.pdp.springsecurityatm.entity;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.GrantedAuthority;
 import uz.pdp.springsecurityatm.entity.enums.RoleName;
 
@@ -24,9 +26,7 @@ public class Role implements GrantedAuthority {
     private RoleName role;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "user_role",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     private Set<User> users;
 

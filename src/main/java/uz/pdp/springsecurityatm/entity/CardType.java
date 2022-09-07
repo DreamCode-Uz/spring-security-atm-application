@@ -12,7 +12,6 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 @Entity(name = "card_type")
 public class CardType {
 

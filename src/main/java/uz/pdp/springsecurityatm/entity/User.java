@@ -28,9 +28,6 @@ public class User {
     private String lastname;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "user_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     private Set<Role> roles;
