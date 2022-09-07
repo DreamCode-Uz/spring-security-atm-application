@@ -1,6 +1,7 @@
 package uz.pdp.springsecurityatm.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.OnDelete;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @Setter
 @ToString
 @Entity
+@JsonIgnoreProperties(value = {"password"})
 public class Card implements UserDetails {
     @Id
     @GeneratedValue
@@ -40,7 +42,7 @@ public class Card implements UserDetails {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date expireDate;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private CardType type;
 
     @Transient
