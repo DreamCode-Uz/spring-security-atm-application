@@ -26,6 +26,9 @@ public class User {
     @Column(nullable = false)
     private String lastname;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private BankOwner bankOwner;
 
     @ManyToMany
     @ToString.Exclude

@@ -80,6 +80,8 @@ public class SpringSecurityAtmApplication implements CommandLineRunner {
             User user = new User("John", "Doe", Collections.singleton(optionalRole.get()));
             card.setEnabled(true);
             user.setCards(Collections.singleton(card));
+            BankOwner bankOwner = new BankOwner(null, "darkprohub-uz@yandex.ru", user, bank);
+            user.setBankOwner(bankOwner);
             card.setUser(user);
             card.setExpireDate(calendar.getTime());
             Card savedUser = cardRepository.save(card);

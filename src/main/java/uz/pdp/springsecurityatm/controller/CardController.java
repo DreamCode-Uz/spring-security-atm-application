@@ -45,4 +45,16 @@ public class CardController {
     public ResponseEntity<?> registerCard(@RequestBody @Valid CardDTO cardDTO) {
         return service.registerCard(cardDTO);
     }
+
+    @PutMapping("/time/{cardId}")
+    @Secured("ROLE_MANAGER") // BU YO'LGA FAQAT MASUL XODIM KIRA OLADI(DIRECTOR HAM KIRA OLMAYDI)
+    public ResponseEntity<?> renewalOfValidityCard(@PathVariable("cardId") UUID id, @RequestParam(name = "year", defaultValue = "1") Integer year) {
+        return service.renewalOfValidity(id, year);
+    }
+
+    @PutMapping("/status/{cardId}")
+    @Secured("ROLE_MANAGER")
+    public ResponseEntity<?> activateOrDeactivateCard(@PathVariable("cardId") UUID id, @RequestParam(name = "active", defaultValue = "false") boolean active) {
+        return service.activateOrDeactivateTheCard(id, active);
+    }
 }

@@ -46,9 +46,15 @@ public class CardService {
         return ok(all);
     }
 
+    //    BITTA KARTANI MA'LUMOTLARINI QAYTARISH
     public ResponseEntity<?> getCard(UUID id) {
         Optional<Card> optionalCard = repository.findById(id);
         return status(optionalCard.isPresent() ? OK : NOT_FOUND).body(optionalCard.isPresent() ? new CardResponse(optionalCard.get()) : "Card not found");
+    }
+
+    //    MAVJUD BARCHA KARTA TOIFALARINI QAYTARISH
+    public ResponseEntity<?> getAllCardTypes() {
+        return ok(typeRepository.findAll());
     }
 
     public ResponseEntity<?> registerCard(CardDTO dto) {
@@ -74,7 +80,22 @@ public class CardService {
         return status(CREATED).body(new CardResponse(repository.save(card)));
     }
 
-    public ResponseEntity<?> getAllCardTypes() {
-        return ok(typeRepository.findAll());
+    //    MAVJUD KARTANI MUDDATINI UZAYTIRISH YANI MAVJUD KARTA IDISI KIRITILGANDA SHU KARTANI YANA {amount} YILGA UZAYTIRISH
+    public ResponseEntity<?> renewalOfValidity(UUID cardId, Integer amount) {
+        Optional<Card> optionalCard = repository.findById(cardId);
+        if (!optionalCard.isPresent()) return status(NOT_FOUND).body("Card not found");
+        Card card = optionalCard.get();
+//        MINIMUM 5 YIL QAYTARADI
+        card.setExpireDate(Action.getCustomExpireDate(amount));
+        return ok(new CardResponse(repository.save(card)));
+    }
+
+    //    MAVJUD KARTANI ACTIVATE YOKI DEACTIVATE QILISH(faol yoki nofaol)
+    public ResponseEntity<?> activateOrDeactivateTheCard(UUID cardId, boolean isActive) {
+        Optional<Card> optionalCard = repository.findById(cardId);
+        if (!optionalCard.isPresent()) return status(NOT_FOUND).body("Card not found");
+        Card card = optionalCard.get();
+        card.setEnabled(isActive);
+        return ok(new CardResponse(repository.save(card)));
     }
 }
