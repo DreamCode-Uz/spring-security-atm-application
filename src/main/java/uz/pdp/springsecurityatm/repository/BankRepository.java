@@ -6,4 +6,5 @@ import uz.pdp.springsecurityatm.entity.Bank;
 
 @Repository
 public interface BankRepository extends JpaRepository<Bank, Integer> {
+    boolean existsByName(String name);
 }

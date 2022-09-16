@@ -1,5 +1,6 @@
 package uz.pdp.springsecurityatm.payload.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uz.pdp.springsecurityatm.entity.Bank;
@@ -8,6 +9,7 @@ import uz.pdp.springsecurityatm.entity.Card;
 import java.util.UUID;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class CardResponse {
     private UUID cardId;

@@ -10,7 +10,9 @@ import uz.pdp.springsecurityatm.entity.*;
 import uz.pdp.springsecurityatm.entity.enums.CardName;
 import uz.pdp.springsecurityatm.entity.enums.RoleName;
 import uz.pdp.springsecurityatm.payload.CardDTO;
+import uz.pdp.springsecurityatm.payload.CardManagerDTO;
 import uz.pdp.springsecurityatm.payload.action.Action;
+import uz.pdp.springsecurityatm.payload.response.CardManagerResponse;
 import uz.pdp.springsecurityatm.payload.response.CardResponse;
 import uz.pdp.springsecurityatm.repository.*;
 
@@ -30,15 +32,19 @@ public class CardService {
     private final BankRepository bankRepository;
     private final CardTypeRepository typeRepository;
     private final PasswordEncoder passwordEncoder;
+    private final BankOwnerRepository ownerRepository;
+    private final MailService mailService;
 
     @Autowired
-    public CardService(CardRepository repository, UserRepository userRepository, RoleRepository roleRepository, BankRepository bankRepository, CardTypeRepository typeRepository, PasswordEncoder passwordEncoder) {
+    public CardService(CardRepository repository, UserRepository userRepository, RoleRepository roleRepository, BankRepository bankRepository, CardTypeRepository typeRepository, PasswordEncoder passwordEncoder, BankOwnerRepository ownerRepository, MailService mailService) {
         this.repository = repository;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.bankRepository = bankRepository;
         this.typeRepository = typeRepository;
         this.passwordEncoder = passwordEncoder;
+        this.ownerRepository = ownerRepository;
+        this.mailService = mailService;
     }
 
     public ResponseEntity<?> getAllCards(Integer page, Integer size) {
@@ -57,6 +63,7 @@ public class CardService {
         return ok(typeRepository.findAll());
     }
 
+    //    MANAGER BANK KARTASINI YARATISHI MUMKIN
     public ResponseEntity<?> registerCard(CardDTO dto) {
         Optional<CardType> cardType = typeRepository.findById(dto.getTypeId());
         if (!cardType.isPresent()) return status(NOT_FOUND).body("Card type not found");
@@ -80,6 +87,35 @@ public class CardService {
         return status(CREATED).body(new CardResponse(repository.save(card)));
     }
 
+    //    DIRECTOR MANAGERNI VA KARTANI YARATADI
+    public ResponseEntity<?> registerManager(CardManagerDTO dto) {
+        if (ownerRepository.existsByEmail(dto.getEmail())) return status(CONFLICT).body("Email already registered");
+        Optional<CardType> optionalCardType = typeRepository.findById(dto.getTypeId());
+        if (!optionalCardType.isPresent()) return status(NOT_FOUND).body("Card type not found");
+        Optional<Bank> optionalBank = bankRepository.findById(dto.getBankId());
+        if (!optionalBank.isPresent()) return status(NOT_FOUND).body("Bank not found");
+        Optional<Role> roleByRole = roleRepository.findRoleByRole(RoleName.ROLE_MANAGER);
+        if (!roleByRole.isPresent()) return status(NOT_FOUND).body("ROLE_MANAGER not found");
+        CardType cardType = optionalCardType.get();
+        String cardNumber = Action.generateCardCode(cardType.getType());
+        while (repository.existsByCardNumber(cardNumber)) {
+            cardNumber = Action.generateCardCode(cardType.getType());
+        }
+        String cvv = null;
+        if (cardType.getType().equals(CardName.VISA))
+            cvv = String.valueOf((int) (Math.random() * (999 - 100) + 100));
+        Card card = new Card(cardNumber, cvv, passwordEncoder.encode(dto.getPinCode()), optionalBank.get(), BigDecimal.valueOf(dto.getBalance()), cardType);
+        User user = new User(dto.getFirstname(), dto.getLastname(), Collections.singleton(roleByRole.get()));
+        user.setCards(Collections.singleton(card));
+        user.setBankOwner(new BankOwner(null, dto.getEmail(), user, optionalBank.get()));
+        card.setUser(user);
+        card.setExpireDate(Action.getCustomExpireDate(10));
+        boolean isSendMail = mailService.sendMail(dto.getEmail(), "Accountni activlashtirish",
+                String.format("http://localhost:8081/api/auth/verify?code=%s&mail=%s", card.getId(), dto.getEmail()));
+        System.out.println("Send Mail: " + isSendMail);
+        return ok(new CardManagerResponse(repository.save(card)));
+    }
+
     //    MAVJUD KARTANI MUDDATINI UZAYTIRISH YANI MAVJUD KARTA IDISI KIRITILGANDA SHU KARTANI YANA {amount} YILGA UZAYTIRISH
     public ResponseEntity<?> renewalOfValidity(UUID cardId, Integer amount) {
         Optional<Card> optionalCard = repository.findById(cardId);
@@ -97,5 +133,16 @@ public class CardService {
         Card card = optionalCard.get();
         card.setEnabled(isActive);
         return ok(new CardResponse(repository.save(card)));
+    }
+
+    public ResponseEntity<?> deleteCard(UUID id) {
+        Optional<Card> optionalCard = repository.findById(id);
+        if (!optionalCard.isPresent()) return notFound().build();
+        try {
+            repository.delete(optionalCard.get());
+            return noContent().build();
+        } catch (Exception exception) {
+            return badRequest().build();
+        }
     }
 }

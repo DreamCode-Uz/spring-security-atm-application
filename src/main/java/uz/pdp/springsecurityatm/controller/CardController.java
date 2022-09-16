@@ -6,6 +6,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uz.pdp.springsecurityatm.payload.CardDTO;
+import uz.pdp.springsecurityatm.payload.CardManagerDTO;
 import uz.pdp.springsecurityatm.service.CardService;
 
 import javax.validation.Valid;
@@ -56,5 +57,17 @@ public class CardController {
     @Secured("ROLE_MANAGER")
     public ResponseEntity<?> activateOrDeactivateCard(@PathVariable("cardId") UUID id, @RequestParam(name = "active", defaultValue = "false") boolean active) {
         return service.activateOrDeactivateTheCard(id, active);
+    }
+
+    @PostMapping("/manager")
+    @Secured("ROLE_DIRECTOR")
+    public ResponseEntity<?> registerManager(@RequestBody @Valid CardManagerDTO cardManagerDTO) {
+        return service.registerManager(cardManagerDTO);
+    }
+
+    @DeleteMapping("/{cardId}")
+    @Secured({"ROLE_DIRECTOR", "ROLE_MANAGER"})
+    public ResponseEntity<?> deleteCard(@PathVariable("cardId") UUID id) {
+        return service.deleteCard(id);
     }
 }
