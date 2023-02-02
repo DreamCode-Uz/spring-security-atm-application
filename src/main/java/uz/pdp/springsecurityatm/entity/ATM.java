@@ -30,7 +30,7 @@ public class ATM {
     private Address address;
 
     @ManyToOne
-    private User user;
+    private User user;  //  Masul hodim
 
     private Double balance;
     private Double commission;
