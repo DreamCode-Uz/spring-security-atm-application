@@ -1,5 +1,6 @@
 package uz.pdp.springsecurityatm.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,6 +15,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @Entity
+@JsonIgnoreProperties(value = {"authority"})
 public class Role implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
