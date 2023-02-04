@@ -1,13 +1,18 @@
 package uz.pdp.springsecurityatm.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.Hibernate;
-import org.springframework.security.core.GrantedAuthority;
-import uz.pdp.springsecurityatm.entity.enums.RoleName;
+import uz.pdp.springsecurityatm.entity.enums.USD;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.Objects;
+
+/*******************************
+ *   @author Dilshod Fayzullayev
+ ********************************/
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,26 +20,21 @@ import java.util.Objects;
 @Setter
 @ToString
 @Entity
-@JsonIgnoreProperties(value = {"authority"})
-public class Role implements GrantedAuthority {
+public class Dollar {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Enumerated(EnumType.STRING)
-    private RoleName role;
+    private USD usd;
 
-    @Override
-    public String getAuthority() {
-        return role.name();
-    }
+    private Integer count;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Role role = (Role) o;
-        return id != null && Objects.equals(id, role.id);
+        Dollar dollar = (Dollar) o;
+        return id != null && Objects.equals(id, dollar.id);
     }
 
     @Override

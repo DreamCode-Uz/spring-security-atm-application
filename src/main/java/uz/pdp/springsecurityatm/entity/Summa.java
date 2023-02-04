@@ -1,40 +1,34 @@
 package uz.pdp.springsecurityatm.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.Hibernate;
-import org.springframework.security.core.GrantedAuthority;
-import uz.pdp.springsecurityatm.entity.enums.RoleName;
+import uz.pdp.springsecurityatm.entity.enums.UZS;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
-@Entity
-@JsonIgnoreProperties(value = {"authority"})
-public class Role implements GrantedAuthority {
+@Entity(name = "summa")
+public class Summa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Enumerated(EnumType.STRING)
-    private RoleName role;
+    private UZS uzs;
 
-    @Override
-    public String getAuthority() {
-        return role.name();
-    }
+    private Integer count;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Role role = (Role) o;
-        return id != null && Objects.equals(id, role.id);
+        Summa summa = (Summa) o;
+        return id != null && Objects.equals(id, summa.id);
     }
 
     @Override

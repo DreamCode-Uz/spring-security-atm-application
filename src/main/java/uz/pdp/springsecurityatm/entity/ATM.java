@@ -29,11 +29,17 @@ public class ATM {
     @OneToOne
     private Address address;
 
-    @ManyToOne
-    private User user;
+    @ManyToMany
+    private Set<Summa> summas;
 
-    private Double balance;
-    private Double commission;
+    @ManyToMany
+    private Set<Dollar> dollars;
+
+    @ManyToOne
+    private User user;  //  Masul hodim
+
+    private Double balance = 0D;
+    private Double commission = 0D;
     private Double maxWithdraw;
 
     @Override

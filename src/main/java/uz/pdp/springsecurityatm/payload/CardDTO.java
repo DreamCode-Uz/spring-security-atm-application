@@ -19,7 +19,7 @@ public class CardDTO {
     @Min(0)
     private Double balance;
     @NotNull
-    private Integer typeId;
+    private Integer typeId; // karta turi
     @NotNull
     private Integer bankId;
 }
