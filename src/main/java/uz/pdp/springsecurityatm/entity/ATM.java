@@ -1,17 +1,16 @@
 package uz.pdp.springsecurityatm.entity;
 
-import lombok.*;
-import org.hibernate.Hibernate;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.Objects;
 import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
 @Entity
 public class ATM {
     @Id
@@ -30,28 +29,29 @@ public class ATM {
     private Address address;
 
     @ManyToMany
+    @ToString.Exclude
     private Set<Summa> summas;
 
     @ManyToMany
+    @ToString.Exclude
     private Set<Dollar> dollars;
 
     @ManyToOne
     private User user;  //  Masul hodim
-
     private Double balance = 0D;
     private Double commission = 0D;
     private Double maxWithdraw;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        ATM atm = (ATM) o;
-        return id != null && Objects.equals(id, atm.id);
+    public ATM(Set<CardType> cardType, Bank bank, Address address, Set<Summa> summas, Set<Dollar> dollars, User user, Double balance, Double commission, Double maxWithdraw) {
+        this.cardType = cardType;
+        this.bank = bank;
+        this.address = address;
+        this.summas = summas;
+        this.dollars = dollars;
+        this.user = user;
+        this.balance = balance;
+        this.commission = commission;
+        this.maxWithdraw = maxWithdraw;
     }
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }
