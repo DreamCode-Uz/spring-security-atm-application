@@ -76,7 +76,7 @@ public class SpringSecurityAtmApplication implements CommandLineRunner {
         Optional<Role> optionalRole = roleRepository.findRoleByRole(RoleName.ROLE_DIRECTOR);
         Optional<CardType> cardTypeByType = cardTypeRepository.findCardTypeByType(CardName.UZCARD);
         if (optionalRole.isPresent() && cardTypeByType.isPresent()) {
-            Card card = new Card("8600000000000000", null, passwordEncoder.encode("1234"), bank, BigDecimal.valueOf(10_000_000D), cardTypeByType.get());
+            Card card = new Card("8600000000000000", null, passwordEncoder.encode("1234"), bank, 10_000_000D, cardTypeByType.get());
             User user = new User("John", "Doe", Collections.singleton(optionalRole.get()));
             card.setEnabled(true);
             user.setCards(Collections.singleton(card));

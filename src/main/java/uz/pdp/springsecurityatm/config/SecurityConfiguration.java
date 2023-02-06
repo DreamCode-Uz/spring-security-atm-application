@@ -18,7 +18,7 @@ import uz.pdp.springsecurityatm.component.JWTFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfiguration {
 
     private final JWTFilter jwtFilter;

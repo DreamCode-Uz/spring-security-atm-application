@@ -76,7 +76,7 @@ public class CardService {
         String cvv = null;
         if (cardType.get().getType().equals(CardName.VISA))
             cvv = String.valueOf((int) (Math.random() * (999 - 100) + 100));
-        Card card = new Card(code, cvv, passwordEncoder.encode(dto.getPinCode()), optionalBank.get(), BigDecimal.valueOf(dto.getBalance()), cardType.get());
+        Card card = new Card(code, cvv, passwordEncoder.encode(dto.getPinCode()), optionalBank.get(), dto.getBalance(), cardType.get());
         Optional<Role> roleByRole = roleRepository.findRoleByRole(RoleName.ROLE_USER);
         if (!roleByRole.isPresent()) return badRequest().body("Role bo'yicha mummo dasturchiga murojat qiling");
         User user = new User(dto.getFirstname(), dto.getLastname(), Collections.singleton(roleByRole.get()));
@@ -104,7 +104,7 @@ public class CardService {
         String cvv = null;
         if (cardType.getType().equals(CardName.VISA))
             cvv = String.valueOf((int) (Math.random() * (999 - 100) + 100));
-        Card card = new Card(cardNumber, cvv, passwordEncoder.encode(dto.getPinCode()), optionalBank.get(), BigDecimal.valueOf(dto.getBalance()), cardType);
+        Card card = new Card(cardNumber, cvv, passwordEncoder.encode(dto.getPinCode()), optionalBank.get(), dto.getBalance(), cardType);
         User user = new User(dto.getFirstname(), dto.getLastname(), Collections.singleton(roleByRole.get()));
         user.setCards(Collections.singleton(card));
         user.setBankOwner(new BankOwner(null, dto.getEmail(), user, optionalBank.get()));

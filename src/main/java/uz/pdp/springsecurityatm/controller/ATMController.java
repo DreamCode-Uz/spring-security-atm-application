@@ -27,7 +27,7 @@ public class ATMController {
         return atmService.getAllATMs();
     }
 
-    @Secured("ROLE_MANAGER")
+    @Secured({"ROLE_MANAGER", "ROLE_DIRECTOR"})
     @GetMapping("/{atmId}")
     public ResponseEntity<?> getOne(@PathVariable(name = "atmId") Long id) {
         return atmService.getOneAtm(id);
