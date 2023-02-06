@@ -12,10 +12,7 @@ import uz.pdp.springsecurityatm.payload.AtmDTO;
 import uz.pdp.springsecurityatm.payload.TakeOutDto;
 import uz.pdp.springsecurityatm.repository.*;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.ResponseEntity.*;
@@ -74,7 +71,7 @@ public class AtmService {
                     address,
                     new HashSet<>(summas),
                     new HashSet<>(dollars),
-                    optionalUser.get(),
+                    optionalUser.get().getId(),
                     getBalance(dto.getSums()),
                     dto.getCommission(),
                     dto.getTakeOut()
@@ -118,7 +115,7 @@ public class AtmService {
         }
         atm.setDollars(atmDTO.getDollars());
         Optional<User> optionalUser = userRepository.findById(atmDTO.getUserId());
-        optionalUser.ifPresent(atm::setUser);
+        optionalUser.ifPresent(user -> atm.setUserId(user.getId()));
         atm.setCardType(checkCardType(atmDTO.getCardTypes()));
         atm.setCommission(atm.getCommission());
         atm.setMaxWithdraw(atmDTO.getTakeOut());
@@ -150,8 +147,9 @@ public class AtmService {
             Optional<ATM> optionalATM = repository.findById(id);
             if (optionalATM.isEmpty()) return status(NOT_FOUND).body("ATM not found");
             ATM atm = optionalATM.get();
+
             Card card = (Card) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (dto.getMoneyType().equals("uzs") && (card.getType().getType().equals(CardName.HUMO) || card.getType().getType().equals(CardName.VISA))) {
+            if (dto.getMoneyType().equals("uzs") && (card.getType().getType().equals(CardName.HUMO) || card.getType().getType().equals(CardName.UZCARD) || card.getType().getType().equals(CardName.VISA))) {
                 if (card.getBalance() >= dto.getMoney() + (dto.getMoney() * atm.getCommission() / 100)) {
                     return withdrawMoneyForSum(dto.getMoney(), atm, card);
                 }
@@ -168,6 +166,7 @@ public class AtmService {
         int _hundred = 0, _fifty = 0, _five = 0, _ten = 0, _one = 0;
         Set<Summa> summas = atm.getSummas();
         for (Summa summa : summas) {
+            System.out.println(summa);
             if (money >= 100_000 && summa.getUzs().equals(UZS._100000) && ((int) (money / 100_000)) >= summa.getCount()) {
                 _hundred = (int) (money / 100_000);
                 money = money - _hundred * 100_000;
@@ -194,35 +193,35 @@ public class AtmService {
     }
 
 
-//    public static void main(String[] args) {
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.print("Enter amount: ");
-//        double money = scanner.nextDouble();
-//        int _hundred = 0, _fifty = 0, _five = 0, _ten = 0, _one = 0;
-//        if (money >= 100_000) {
-//            _hundred = (int) money / 100_000;
-//            money = money - _hundred * 100_000;
-//        }
-//        if (money >= 50_000) {
-//            _fifty = (int) money / 50_000;
-//            money = money - _fifty * 50_000;
-//        }
-//        if (money >= 10_000) {
-//            _ten = (int) money / 10_000;
-//            money = money - _ten * 10_000;
-//        }
-//        if (money >= 5_000) {
-//            _five = (int) money / 5_000;
-//            money = money - _five * 5_000;
-//        }
-//        if (money >= 1_000) {
-//            _five = (int) money / 1_000;
-//            money = money - _five * 1_000;
-//        }
-//        System.out.println("yuz ming so'm donasi: " + _hundred);
-//        System.out.println("ellik ming so'm donasi: " + _fifty);
-//        System.out.println("o'n ming so'm donasi: " + _ten);
-//        System.out.println("besh ming so'm donasi: " + _five);
-//        System.out.println("ming so'm donasi: " + _one);
-//    }
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter amount: ");
+        double money = scanner.nextDouble();
+        int _hundred = 0, _fifty = 0, _five = 0, _ten = 0, _one = 0;
+        if (money >= 100_000) {
+            _hundred = (int) money / 100_000;
+            money = money - _hundred * 100_000;
+        }
+        if (money >= 50_000) {
+            _fifty = (int) money / 50_000;
+            money = money - _fifty * 50_000;
+        }
+        if (money >= 10_000) {
+            _ten = (int) money / 10_000;
+            money = money - _ten * 10_000;
+        }
+        if (money >= 5_000) {
+            _five = (int) money / 5_000;
+            money = money - _five * 5_000;
+        }
+        if (money >= 1_000) {
+            _five = (int) money / 1_000;
+            money = money - _five * 1_000;
+        }
+        System.out.println("yuz ming so'm donasi: " + _hundred);
+        System.out.println("ellik ming so'm donasi: " + _fifty);
+        System.out.println("o'n ming so'm donasi: " + _ten);
+        System.out.println("besh ming so'm donasi: " + _five);
+        System.out.println("ming so'm donasi: " + _one);
+    }
 }

@@ -57,7 +57,7 @@ public class Card implements UserDetails {
     @ToString.Exclude
     private User user;
 
-    private BigDecimal balance = new BigDecimal(0);
+    private Double balance = 0D;
 
     private boolean enabled;
     private boolean accountNonExpired = true;
@@ -103,7 +103,7 @@ public class Card implements UserDetails {
         return String.format("%s %s", this.user.getFirstName() != null ? this.user.getFirstName() : "", this.user.getLastname() != null ? this.user.getLastname() : "").trim();
     }
 
-    public Card(String cardNumber, String cvv, String pinCode, Bank bank, BigDecimal balance, CardType type) {
+    public Card(String cardNumber, String cvv, String pinCode, Bank bank, Double balance, CardType type) {
         this.cardNumber = cardNumber;
         this.cvv = cvv;
         this.pinCode = pinCode;
